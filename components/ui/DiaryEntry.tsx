@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import Image from 'next/image'
 import { motion } from 'motion/react'
 import { Entry } from '@/lib/types'
+import { compressImage } from '@/lib/compressImage'
 
 interface DiaryEntryProps {
   entry: Entry
@@ -53,7 +54,8 @@ export default function DiaryEntry({ entry, isAuthenticated, onUpdate, onDelete,
 
     const newUrls: string[] = []
 
-    for (const file of files) {
+    for (const raw of files) {
+      const file = await compressImage(raw)
       const form = new FormData()
       form.append('file', file)
 

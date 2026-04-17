@@ -12,7 +12,7 @@ export const TAB_DEFINITIONS: TabDefinition[] = [
     label: 'De første dagene',
     getDateRange: (birthDate) => ({
       from: new Date(birthDate.getTime() - 2 * 24 * 60 * 60 * 1000),
-      to: new Date(birthDate.getTime() + 14 * 24 * 60 * 60 * 1000),
+      to: new Date(birthDate.getTime() + 7 * 24 * 60 * 60 * 1000),
     }),
   },
   {
@@ -20,7 +20,7 @@ export const TAB_DEFINITIONS: TabDefinition[] = [
     href: '/de-forste-ukene',
     label: 'De første ukene',
     getDateRange: (birthDate) => ({
-      from: new Date(birthDate.getTime() + 14 * 24 * 60 * 60 * 1000),
+      from: new Date(birthDate.getTime() + 7 * 24 * 60 * 60 * 1000),
       to: new Date(birthDate.getTime() + 56 * 24 * 60 * 60 * 1000),
     }),
   },

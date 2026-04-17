@@ -52,7 +52,7 @@ export default async function DeForsteUkenePage() {
       maxDate={maxDate}
       tabKey={TAB_KEY}
       heading="De første ukene"
-      subtitle="Uke 3 – 8"
+      subtitle="Uke 2 – 8"
     />
   )
 }

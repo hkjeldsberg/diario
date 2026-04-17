@@ -3,6 +3,7 @@ import { requireAuth } from '@/lib/auth'
 import { pollPickerSession, deletePickerSession, isPickerConfigured, getAccessToken } from '@/lib/google-picker'
 import { supabaseAdmin, STORAGE_BUCKET } from '@/lib/supabase'
 import { randomUUID } from 'crypto'
+import sharp from 'sharp'
 
 export async function GET(
   request: NextRequest,
@@ -39,14 +40,22 @@ export async function GET(
           continue
         }
 
-        const buffer = await photoRes.arrayBuffer()
-        const ext = item.mediaFile.filename.split('.').pop() ?? 'jpg'
+        const rawBuffer = await photoRes.arrayBuffer()
+        const isImage = item.mediaFile.mimeType?.startsWith('image/')
+        const compressed = isImage
+          ? await sharp(Buffer.from(rawBuffer))
+              .resize({ width: 2000, withoutEnlargement: true })
+              .jpeg({ quality: 80 })
+              .toBuffer()
+          : Buffer.from(rawBuffer)
+        const contentType = isImage ? 'image/jpeg' : item.mediaFile.mimeType
+        const ext = isImage ? 'jpg' : (item.mediaFile.filename.split('.').pop() ?? 'jpg')
         const filename = `picker/${randomUUID()}.${ext}`
 
         const { data, error } = await supabaseAdmin.storage
           .from(STORAGE_BUCKET)
-          .upload(filename, buffer, {
-            contentType: item.mediaFile.mimeType,
+          .upload(filename, compressed, {
+            contentType,
             upsert: false,
           })
 

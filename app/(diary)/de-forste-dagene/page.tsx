@@ -52,7 +52,7 @@ export default async function DeForsteDagenePage() {
       maxDate={maxDate}
       tabKey={TAB_KEY}
       heading="De første dagene"
-      subtitle="Dag 1 – 14"
+      subtitle="Dag 1 – 7"
     />
   )
 }

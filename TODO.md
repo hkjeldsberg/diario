@@ -1,5 +1,6 @@
 # 2026-04-17
 ## In Progress
+- [x] Add image conversion to JPEG on upload and resize the image to max 2000px wide. 
 
 ## Completed
 - [x] Add possibility to remove a diary entry

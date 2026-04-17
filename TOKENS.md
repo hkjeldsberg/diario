@@ -92,12 +92,21 @@ Token counts below are approximate, based on tool use output metadata where avai
 | Postboks: taller images (max-h-96), arrows+dots bottom bar, Framer Motion lightbox on click | ~5k | ~1k | EmailCard.tsx |
 | **Day Total** | **~201k** | **~30.5k** | **~231.5k tokens** |
 
+#### 2026-04-17
+
+| Task | Input Tokens | Output Tokens | Notes |
+|---|---|---|---|
+| De første dagene: change range from 14 days to 7 days | ~1k | ~0.3k | lib/tabs.ts + page subtitles |
+| Image compression on upload: JPEG 80%, max 2000px | ~8k | ~1k | lib/compressImage.ts (canvas) + DiaryEntry + AddEntryForm + sharp in picker route |
+| **Day Total** | **~9k** | **~1.3k** | **~10.3k tokens** |
+
 #### Polishing Phase Total
 
 | | Input Tokens | Output Tokens | Total |
 |---|---|---|---|
 | 2026-04-16 | ~196k | ~29.5k | ~225.5k |
-| **All days** | **~196k** | **~29.5k** | **~225.5k tokens** |
+| 2026-04-17 | ~9k | ~1.3k | ~10.3k |
+| **All days** | **~205k** | **~30.8k** | **~235.8k tokens** |
 
 ### Grand Total
 
@@ -105,8 +114,8 @@ Token counts below are approximate, based on tool use output metadata where avai
 |---|---|---|---|
 | Planning | ~243k | ~41k | ~284k |
 | Implementation | ~215k | ~30k | ~245k |
-| Polishing | ~196k | ~29.5k | ~225.5k |
-| **Grand Total** | ~654k | ~100.5k | **~754.5k tokens** |
+| Polishing | ~205k | ~30.8k | ~235.8k |
+| **Grand Total** | ~663k | ~101.8k | **~764.8k tokens** |
 
 ---
 

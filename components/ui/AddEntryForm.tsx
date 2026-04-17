@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { Entry } from '@/lib/types'
+import { compressImage } from '@/lib/compressImage'
 
 interface AddEntryFormProps {
   tabKey: string
@@ -30,7 +31,8 @@ export default function AddEntryForm({ tabKey, minDate, maxDate, onSuccess }: Ad
     setError('')
 
     const urls: string[] = []
-    for (const file of files) {
+    for (const raw of files) {
+      const file = await compressImage(raw)
       const form = new FormData()
       form.append('file', file)
 
