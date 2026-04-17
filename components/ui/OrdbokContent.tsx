@@ -37,6 +37,10 @@ export default function OrdbokContent({ initialWords, isAuthenticated }: OrdbokC
     )
   }
 
+  function updateWord(updated: WordEntry) {
+    setWords((prev) => prev.map((w) => (w.id === updated.id ? { ...updated, variants: w.variants } : w)))
+  }
+
   function deleteWordVariant(wordId: string, variantId: string) {
     setWords((prev) =>
       prev.map((w) =>
@@ -90,6 +94,7 @@ export default function OrdbokContent({ initialWords, isAuthenticated }: OrdbokC
             word={word}
             isAuthenticated={isAuthenticated}
             onDeleteWord={handleDeleteWord}
+            onWordUpdate={updateWord}
             onVariantUpdate={updateWordVariants}
             onVariantDelete={deleteWordVariant}
           />
@@ -187,17 +192,42 @@ function WordRow({
   word,
   isAuthenticated,
   onDeleteWord,
+  onWordUpdate,
   onVariantUpdate,
   onVariantDelete,
 }: {
   word: WordEntry
   isAuthenticated: boolean
   onDeleteWord: (id: string) => void
+  onWordUpdate: (updated: WordEntry) => void
   onVariantUpdate: (wordId: string, v: WordVariant) => void
   onVariantDelete: (wordId: string, variantId: string) => void
 }) {
   const [editingCell, setEditingCell] = useState<EditingCell>(null)
   const [editValue, setEditValue] = useState('')
+  const [editingBase, setEditingBase] = useState<'base_word' | 'first_heard_at' | null>(null)
+  const [baseEditValue, setBaseEditValue] = useState('')
+
+  function startEditBase(field: 'base_word' | 'first_heard_at', current: string) {
+    setEditingBase(field)
+    setBaseEditValue(current)
+  }
+
+  async function commitBaseEdit() {
+    if (!editingBase) return
+    setEditingBase(null)
+    const res = await fetch(`/api/words/${word.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ [editingBase]: baseEditValue.trim() }),
+    })
+    if (res.ok) onWordUpdate(await res.json())
+  }
+
+  function handleBaseKey(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') e.currentTarget.blur()
+    if (e.key === 'Escape') setEditingBase(null)
+  }
 
   const hasVariants = (word.variants?.length ?? 0) > 0
   const sortedVariants = hasVariants
@@ -237,18 +267,48 @@ function WordRow({
   if (!hasVariants) {
     return (
       <div className="group flex items-baseline gap-3 py-2 border-b border-dusty-rose/10 last:border-0">
-        <span className="font-display text-lg text-terracotta italic min-w-[80px]">
-          {word.base_word}
-        </span>
+        {editingBase === 'base_word' ? (
+          <input
+            autoFocus
+            type="text"
+            value={baseEditValue}
+            onChange={(e) => setBaseEditValue(e.target.value)}
+            onBlur={commitBaseEdit}
+            onKeyDown={handleBaseKey}
+            className="font-display text-lg text-terracotta italic bg-transparent border-b border-terracotta/40 outline-none w-24"
+          />
+        ) : (
+          <span
+            className={`font-display text-lg text-terracotta italic min-w-[80px] ${isAuthenticated ? 'cursor-pointer hover:underline decoration-dotted' : ''}`}
+            onClick={() => isAuthenticated && startEditBase('base_word', word.base_word)}
+          >
+            {word.base_word}
+          </span>
+        )}
         {word.real_word && (
           <>
             <span className="text-stone-300 text-sm select-none">→</span>
             <span className="font-body text-stone-700 text-sm">{word.real_word}</span>
           </>
         )}
-        <span className="font-handwritten text-stone-400 text-sm ml-auto whitespace-nowrap">
-          {fmtDate(word.first_heard_at)}
-        </span>
+        {editingBase === 'first_heard_at' ? (
+          <input
+            autoFocus
+            type="date"
+            value={baseEditValue}
+            onChange={(e) => setBaseEditValue(e.target.value)}
+            onBlur={commitBaseEdit}
+            onKeyDown={handleBaseKey}
+            className="font-handwritten text-stone-400 text-sm ml-auto bg-transparent border-b border-stone-300 outline-none"
+          />
+        ) : (
+          <span
+            className={`font-handwritten text-stone-400 text-sm ml-auto whitespace-nowrap ${isAuthenticated ? 'cursor-pointer hover:text-stone-600' : ''}`}
+            onClick={() => isAuthenticated && startEditBase('first_heard_at', word.first_heard_at)}
+          >
+            {fmtDate(word.first_heard_at)}
+          </span>
+        )}
         {isAuthenticated && (
           <button
             type="button"
@@ -269,8 +329,42 @@ function WordRow({
       <div className="flex items-start gap-0">
         {/* Base word step */}
         <div className="flex flex-col items-center flex-shrink-0">
-          <span className="font-display text-base text-terracotta italic">{word.base_word}</span>
-          <span className="font-handwritten text-stone-300 text-xs">{fmtShort(word.first_heard_at)}</span>
+          {editingBase === 'base_word' ? (
+            <input
+              autoFocus
+              type="text"
+              value={baseEditValue}
+              onChange={(e) => setBaseEditValue(e.target.value)}
+              onBlur={commitBaseEdit}
+              onKeyDown={handleBaseKey}
+              className="font-display text-base text-terracotta italic bg-transparent border-b border-terracotta/40 outline-none w-20 text-center"
+            />
+          ) : (
+            <span
+              className={`font-display text-base text-terracotta italic ${isAuthenticated ? 'cursor-pointer hover:underline decoration-dotted' : ''}`}
+              onClick={() => isAuthenticated && startEditBase('base_word', word.base_word)}
+            >
+              {word.base_word}
+            </span>
+          )}
+          {editingBase === 'first_heard_at' ? (
+            <input
+              autoFocus
+              type="date"
+              value={baseEditValue}
+              onChange={(e) => setBaseEditValue(e.target.value)}
+              onBlur={commitBaseEdit}
+              onKeyDown={handleBaseKey}
+              className="font-handwritten text-xs text-stone-400 bg-transparent border-b border-stone-300 outline-none w-24 text-center"
+            />
+          ) : (
+            <span
+              className={`font-handwritten text-stone-300 text-xs ${isAuthenticated ? 'cursor-pointer hover:text-stone-500' : ''}`}
+              onClick={() => isAuthenticated && startEditBase('first_heard_at', word.first_heard_at)}
+            >
+              {fmtShort(word.first_heard_at)}
+            </span>
+          )}
         </div>
 
         {/* Variant steps */}

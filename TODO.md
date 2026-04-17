@@ -2,6 +2,7 @@
 ## In Progress
 
 ## Completed
+- [x] Ordbok: base word (name + date) editable inline, PATCHes word_entries
 - [x] Mobile nav: hamburger menu with dropdown, active tab label shown
 - [x] Ordbok: variant edit/delete inline + inline evolution layout (Avo → Avoka → Avokado)
 - [x] Ordbok: wire up to sofia.word_entries + sofia.word_variants with full CRUD
