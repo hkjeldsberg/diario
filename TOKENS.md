@@ -98,15 +98,21 @@ Token counts below are approximate, based on tool use output metadata where avai
 |---|---|---|---|
 | De første dagene: change range from 14 days to 7 days | ~1k | ~0.3k | lib/tabs.ts + page subtitles |
 | Image compression on upload: JPEG 80%, max 2000px | ~8k | ~1k | lib/compressImage.ts (canvas) + DiaryEntry + AddEntryForm + sharp in picker route |
-| **Day Total** | **~9k** | **~1.3k** | **~10.3k tokens** |
+| Tab transition + loading skeletons | ~6k | ~1.5k | loading.tsx (diary + postboks), template.tsx fade tweak |
+| Upload progress bar | ~5k | ~1k | AddEntryForm + DiaryEntry: uploadProgress state + animated bar |
+| Ordbok: remove "Ditt ord" label + word remove X | ~3k | ~0.5k | din-ordbok/page.tsx |
+| Remove images from diary entries | ~5k | ~1k | DiaryEntry.tsx handleRemoveImage + hover X on polaroid |
+| Ordbok: server component + OrdbokContent + API routes (words CRUD) | ~10k | ~2k | page.tsx, OrdbokContent.tsx, api/words/route.ts, [id]/route.ts |
+| Ordbok: variant edit/delete + inline evolution layout | ~6k | ~1.5k | OrdbokContent.tsx rewrite + api/words/[id]/variants/[variantId]/route.ts |
+| **Day Total** | **~37k** | **~7k** | **~44k tokens** |
 
 #### Polishing Phase Total
 
 | | Input Tokens | Output Tokens | Total |
 |---|---|---|---|
 | 2026-04-16 | ~196k | ~29.5k | ~225.5k |
-| 2026-04-17 | ~9k | ~1.3k | ~10.3k |
-| **All days** | **~205k** | **~30.8k** | **~235.8k tokens** |
+| 2026-04-17 | ~37k | ~7k | ~44k |
+| **All days** | **~233k** | **~36.5k** | **~269.5k tokens** |
 
 ### Grand Total
 
@@ -114,8 +120,8 @@ Token counts below are approximate, based on tool use output metadata where avai
 |---|---|---|---|
 | Planning | ~243k | ~41k | ~284k |
 | Implementation | ~215k | ~30k | ~245k |
-| Polishing | ~205k | ~30.8k | ~235.8k |
-| **Grand Total** | ~663k | ~101.8k | **~764.8k tokens** |
+| Polishing | ~223k | ~34.5k | ~257.5k |
+| **Grand Total** | ~681k | ~105.5k | **~786.5k tokens** |
 
 ---
 

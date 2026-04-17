@@ -15,7 +15,7 @@ export default function AddEntryForm({ tabKey, minDate, maxDate, onSuccess }: Ad
   const [open, setOpen] = useState(false)
   const [date, setDate] = useState(minDate)
   const [text, setText] = useState('')
-  const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(null)
   const [mediaUrls, setMediaUrls] = useState<string[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -27,12 +27,13 @@ export default function AddEntryForm({ tabKey, minDate, maxDate, onSuccess }: Ad
     const files = Array.from(e.target.files ?? [])
     if (files.length === 0) return
 
-    setUploading(true)
+    setUploadProgress({ current: 0, total: files.length })
     setError('')
 
     const urls: string[] = []
-    for (const raw of files) {
-      const file = await compressImage(raw)
+    for (let idx = 0; idx < files.length; idx++) {
+      setUploadProgress({ current: idx + 1, total: files.length })
+      const file = await compressImage(files[idx])
       const form = new FormData()
       form.append('file', file)
 
@@ -40,7 +41,7 @@ export default function AddEntryForm({ tabKey, minDate, maxDate, onSuccess }: Ad
       if (!res.ok) {
         const data = await res.json()
         setError(data.error ?? 'Opplasting feilet')
-        setUploading(false)
+        setUploadProgress(null)
         return
       }
       const data = await res.json()
@@ -48,7 +49,7 @@ export default function AddEntryForm({ tabKey, minDate, maxDate, onSuccess }: Ad
     }
 
     setMediaUrls((prev) => [...prev, ...urls])
-    setUploading(false)
+    setUploadProgress(null)
     // Reset file input
     if (fileRef.current) fileRef.current.value = ''
   }
@@ -189,8 +190,18 @@ export default function AddEntryForm({ tabKey, minDate, maxDate, onSuccess }: Ad
                 onChange={handleFileChange}
                 className="block w-full font-body text-sm text-stone-500 file:mr-3 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:bg-sage/20 file:text-sage file:font-body file:text-sm hover:file:bg-sage/30"
               />
-              {uploading && (
-                <p className="text-sm font-body text-stone-400 mt-1">Laster opp...</p>
+              {uploadProgress && (
+                <div className="mt-2">
+                  <p className="text-xs font-body text-stone-500 mb-1">
+                    Behandler {uploadProgress.current} av {uploadProgress.total}...
+                  </p>
+                  <div className="h-1.5 bg-cream-dark rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-terracotta transition-all duration-300 ease-out rounded-full"
+                      style={{ width: `${(uploadProgress.current / uploadProgress.total) * 100}%` }}
+                    />
+                  </div>
+                </div>
               )}
               {mediaUrls.length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -226,7 +237,7 @@ export default function AddEntryForm({ tabKey, minDate, maxDate, onSuccess }: Ad
                 <button
                   type="button"
                   onClick={handlePickerImport}
-                  disabled={uploading || submitting}
+                  disabled={uploadProgress !== null || submitting}
                   className="text-sm font-body text-sage hover:text-sage/70 underline underline-offset-2 transition-colors disabled:opacity-50"
                 >
                   Importer fra Google Photos
@@ -243,7 +254,7 @@ export default function AddEntryForm({ tabKey, minDate, maxDate, onSuccess }: Ad
             <div className="flex gap-3 pt-2">
               <button
                 type="submit"
-                disabled={submitting || uploading}
+                disabled={submitting || uploadProgress !== null}
                 className="px-5 py-2 bg-terracotta text-cream rounded-full font-body text-sm hover:bg-terracotta/90 transition-colors disabled:opacity-60"
               >
                 {submitting ? 'Lagrer...' : 'Lagre'}

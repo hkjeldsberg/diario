@@ -15,7 +15,7 @@ interface DiaryEntryProps {
 }
 
 export default function DiaryEntry({ entry, isAuthenticated, onUpdate, onDelete, index = 0 }: DiaryEntryProps) {
-  const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(null)
   const [error, setError] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -49,13 +49,14 @@ export default function DiaryEntry({ entry, isAuthenticated, onUpdate, onDelete,
     const files = Array.from(e.target.files ?? [])
     if (files.length === 0) return
 
-    setUploading(true)
+    setUploadProgress({ current: 0, total: files.length })
     setError('')
 
     const newUrls: string[] = []
 
-    for (const raw of files) {
-      const file = await compressImage(raw)
+    for (let idx = 0; idx < files.length; idx++) {
+      setUploadProgress({ current: idx + 1, total: files.length })
+      const file = await compressImage(files[idx])
       const form = new FormData()
       form.append('file', file)
 
@@ -63,7 +64,7 @@ export default function DiaryEntry({ entry, isAuthenticated, onUpdate, onDelete,
       if (!res.ok) {
         const data = await res.json()
         setError(data.error ?? 'Opplasting feilet')
-        setUploading(false)
+        setUploadProgress(null)
         return
       }
       const data = await res.json()
@@ -88,7 +89,7 @@ export default function DiaryEntry({ entry, isAuthenticated, onUpdate, onDelete,
     const updated: Entry = await patchRes.json()
     onUpdate?.(updated)
 
-    setUploading(false)
+    setUploadProgress(null)
     if (fileRef.current) fileRef.current.value = ''
   }
 
@@ -163,6 +164,17 @@ export default function DiaryEntry({ entry, isAuthenticated, onUpdate, onDelete,
       return
     }
     onDelete?.(entry.id)
+  }
+
+  async function handleRemoveImage(index: number) {
+    const updatedUrls = (entry.media_urls ?? []).filter((_, i) => i !== index)
+    const patchRes = await fetch(`/api/entries/${entry.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ media_urls: updatedUrls }),
+    })
+    if (patchRes.ok) onUpdate?.(await patchRes.json())
+    else setError('Kunne ikke slette bildet')
   }
 
   async function handlePickerImport() {
@@ -253,7 +265,7 @@ export default function DiaryEntry({ entry, isAuthenticated, onUpdate, onDelete,
           return (
             <motion.div
               key={i}
-              className="bg-white p-2 pb-7 shadow-md cursor-pointer select-none"
+              className="relative group/img bg-white p-2 pb-7 shadow-md cursor-pointer select-none"
               initial={{ rotate: 0, opacity: 0, y: -8 }}
               animate={{ rotate: rot, opacity: 1, y: 0 }}
               transition={{ type: 'spring', stiffness: 60, damping: 12, delay: i * 0.06, opacity: { duration: 0.3 } }}
@@ -271,6 +283,13 @@ export default function DiaryEntry({ entry, isAuthenticated, onUpdate, onDelete,
                   sizes="(min-width: 768px) 25vw, 50vw"
                 />
               </div>
+              {isAuthenticated && (
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); handleRemoveImage(i) }}
+                  className="absolute top-1 right-1 opacity-0 group-hover/img:opacity-100 transition-opacity bg-white/90 rounded-full w-5 h-5 flex items-center justify-center text-xs text-stone-400 hover:text-red-500 shadow-sm z-10"
+                >✕</button>
+              )}
             </motion.div>
           )
         })}
@@ -321,8 +340,10 @@ export default function DiaryEntry({ entry, isAuthenticated, onUpdate, onDelete,
 
         {isAuthenticated && (
           <div className="flex items-center gap-2">
-            {uploading && (
-              <span className="font-body text-xs text-stone-400">Laster opp...</span>
+            {uploadProgress !== null && (
+              <span className="font-body text-xs text-stone-400">
+                {uploadProgress.current}/{uploadProgress.total}
+              </span>
             )}
             {!editing && (
               <button
@@ -337,7 +358,7 @@ export default function DiaryEntry({ entry, isAuthenticated, onUpdate, onDelete,
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              disabled={uploading}
+              disabled={uploadProgress !== null}
               className="opacity-0 group-hover:opacity-100 transition-opacity text-xs font-body text-sage hover:text-sage/70 flex items-center gap-1 disabled:opacity-40"
               title="Legg til bilde"
             >
@@ -352,7 +373,7 @@ export default function DiaryEntry({ entry, isAuthenticated, onUpdate, onDelete,
               <button
                 type="button"
                 onClick={handlePickerImport}
-                disabled={uploading}
+                disabled={uploadProgress !== null}
                 className="opacity-0 group-hover:opacity-100 transition-opacity text-xs font-body text-sage hover:text-sage/70 disabled:opacity-40"
                 title="Importer fra Google Photos"
               >
@@ -408,6 +429,21 @@ export default function DiaryEntry({ entry, isAuthenticated, onUpdate, onDelete,
         </div>
       ) : (
         textBlock
+      )}
+
+      {/* Upload progress */}
+      {uploadProgress !== null && (
+        <div className="mt-2">
+          <p className="text-xs font-body text-stone-500 mb-1">
+            Behandler {uploadProgress.current} av {uploadProgress.total}...
+          </p>
+          <div className="h-1.5 bg-cream-dark rounded-full overflow-hidden">
+            <div
+              className="h-full bg-terracotta transition-all duration-300 ease-out rounded-full"
+              style={{ width: `${(uploadProgress.current / uploadProgress.total) * 100}%` }}
+            />
+          </div>
+        </div>
       )}
 
       {/* Error */}

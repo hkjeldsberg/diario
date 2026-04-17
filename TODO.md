@@ -1,8 +1,15 @@
 # 2026-04-17
 ## In Progress
-- [x] Add image conversion to JPEG on upload and resize the image to max 2000px wide. 
-
 ## Completed
+- [x] Ordbok: variant edit/delete inline + inline evolution layout (Avo → Avoka → Avokado)
+- [x] Ordbok: wire up to sofia.word_entries + sofia.word_variants with full CRUD
+- [x] Tab transition: simple fade-in only (no AnimatePresence/exit), removed diary loading.tsx that caused skeleton flash
+- [x] Upload progress bar with file counter and animated bar
+- [x] Postboks skeleton loading state
+- [x] Ordbok: remove "Ditt ord" label, keep canonical word styled differently
+- [x] Remove images from diary entries (hover X button)
+- [x] Remove word in ordbok (hover X button on chip)
+- [x] Add image conversion to JPEG on upload and resize the image to max 2000px wide. 
 - [x] Add possibility to remove a diary entry
 - [x] Postboks: emails with photos not showing text body
 - [x] Google Photos Picker: fix download (add Bearer token, use =d suffix)
