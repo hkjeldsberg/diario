@@ -1,6 +1,8 @@
 # 2026-04-17
 ## In Progress
+
 ## Completed
+- [x] Mobile nav: hamburger menu with dropdown, active tab label shown
 - [x] Ordbok: variant edit/delete inline + inline evolution layout (Avo → Avoka → Avokado)
 - [x] Ordbok: wire up to sofia.word_entries + sofia.word_variants with full CRUD
 - [x] Tab transition: simple fade-in only (no AnimatePresence/exit), removed diary loading.tsx that caused skeleton flash

@@ -104,6 +104,7 @@ Token counts below are approximate, based on tool use output metadata where avai
 | Remove images from diary entries | ~5k | ~1k | DiaryEntry.tsx handleRemoveImage + hover X on polaroid |
 | Ordbok: server component + OrdbokContent + API routes (words CRUD) | ~10k | ~2k | page.tsx, OrdbokContent.tsx, api/words/route.ts, [id]/route.ts |
 | Ordbok: variant edit/delete + inline evolution layout | ~6k | ~1.5k | OrdbokContent.tsx rewrite + api/words/[id]/variants/[variantId]/route.ts |
+| Mobile nav: hamburger dropdown + active tab label | ~2k | ~0.5k | TabNav.tsx |
 | **Day Total** | **~37k** | **~7k** | **~44k tokens** |
 
 #### Polishing Phase Total
