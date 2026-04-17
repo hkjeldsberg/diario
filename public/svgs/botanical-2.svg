@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 400" fill="none">
+  <!-- Main frond -->
+  <path d="M125 380 Q120 300 110 200 Q100 100 80 20" stroke="#8FAF8A" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6"/>
+  <!-- Left fronds -->
+  <path d="M115 320 Q90 300 70 280" stroke="#8FAF8A" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+  <path d="M112 280 Q85 255 65 230" stroke="#8FAF8A" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+  <path d="M108 240 Q80 210 60 180" stroke="#8FAF8A" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+  <path d="M104 200 Q75 165 58 130" stroke="#8FAF8A" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+  <path d="M100 160 Q72 120 58 85" stroke="#8FAF8A" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.4"/>
+  <!-- Right fronds -->
+  <path d="M118 310 Q145 290 165 270" stroke="#8FAF8A" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+  <path d="M114 270 Q142 245 162 218" stroke="#8FAF8A" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+  <path d="M110 230 Q138 200 158 170" stroke="#8FAF8A" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+  <path d="M106 190 Q132 155 150 120" stroke="#8FAF8A" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.4"/>
+  <path d="M102 150 Q126 112 142 78" stroke="#8FAF8A" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.4"/>
+</svg>

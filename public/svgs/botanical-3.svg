@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200" fill="none">
+  <!-- Branch -->
+  <path d="M20 180 Q80 140 150 100 Q200 70 280 20" stroke="#C8944A" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"/>
+  <!-- Small leaves along branch -->
+  <ellipse cx="80" cy="148" rx="18" ry="8" fill="#8FAF8A" opacity="0.45" transform="rotate(-30 80 148)"/>
+  <ellipse cx="140" cy="112" rx="18" ry="8" fill="#8FAF8A" opacity="0.45" transform="rotate(-40 140 112)"/>
+  <ellipse cx="200" cy="78" rx="16" ry="7" fill="#8FAF8A" opacity="0.4" transform="rotate(-50 200 78)"/>
+  <!-- Rosebud 1 -->
+  <circle cx="60" cy="155" r="7" fill="#D4A5A5" opacity="0.55"/>
+  <path d="M58 149 Q60 144 62 149" stroke="#D4A5A5" stroke-width="2" fill="none" opacity="0.5"/>
+  <!-- Rosebud 2 -->
+  <circle cx="180" cy="90" r="9" fill="#D4A5A5" opacity="0.55"/>
+  <path d="M177 83 Q180 77 183 83" stroke="#D4A5A5" stroke-width="2" fill="none" opacity="0.5"/>
+  <!-- Rosebud 3 -->
+  <circle cx="260" cy="30" r="7" fill="#C4674A" opacity="0.5"/>
+  <path d="M258 24 Q260 19 262 24" stroke="#C4674A" stroke-width="1.5" fill="none" opacity="0.45"/>
+</svg>

@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-dusty-rose: #D4A5A5;
+  --color-sage: #8FAF8A;
+  --color-terracotta: #C4674A;
+  --color-cream: #F5EFE0;
+  --color-amber: #C8944A;
+}
+
+@layer base {
+  body {
+    @apply bg-cream font-body text-stone-800;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+
+  h1, h2, h3 {
+    @apply font-display;
+  }
+}
+
+@layer utilities {
+  .font-handwritten {
+    font-family: var(--font-caveat), cursive;
+  }
+}
+
+/* Hide scrollbar for tab nav horizontal scroll */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Prose styling for email HTML bodies */
+.prose a {
+  color: var(--color-terracotta);
+  text-decoration: underline;
+}
+
+/* Ensure Caveat font renders correctly via utility class */
+.font-handwritten {
+  font-family: var(--font-caveat), cursive;
+}

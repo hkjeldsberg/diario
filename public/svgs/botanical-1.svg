@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" fill="none">
+  <!-- Stem -->
+  <path d="M100 280 Q95 200 90 150 Q85 100 100 20" stroke="#8FAF8A" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.7"/>
+  <!-- Leaves -->
+  <path d="M90 150 Q60 130 40 100 Q70 110 90 140" fill="#8FAF8A" opacity="0.5"/>
+  <path d="M95 120 Q130 100 150 70 Q125 90 96 115" fill="#8FAF8A" opacity="0.5"/>
+  <path d="M100 180 Q70 170 50 150 Q75 160 100 175" fill="#8FAF8A" opacity="0.4"/>
+  <!-- Flower head -->
+  <circle cx="100" cy="25" r="8" fill="#D4A5A5" opacity="0.6"/>
+  <ellipse cx="100" cy="10" rx="6" ry="12" fill="#D4A5A5" opacity="0.5"/>
+  <ellipse cx="113" cy="17" rx="6" ry="12" fill="#D4A5A5" opacity="0.5" transform="rotate(60 113 17)"/>
+  <ellipse cx="113" cy="33" rx="6" ry="12" fill="#D4A5A5" opacity="0.5" transform="rotate(120 113 33)"/>
+  <ellipse cx="100" cy="40" rx="6" ry="12" fill="#D4A5A5" opacity="0.5" transform="rotate(180 100 40)"/>
+  <ellipse cx="87" cy="33" rx="6" ry="12" fill="#D4A5A5" opacity="0.5" transform="rotate(240 87 33)"/>
+  <ellipse cx="87" cy="17" rx="6" ry="12" fill="#D4A5A5" opacity="0.5" transform="rotate(300 87 17)"/>
+</svg>
