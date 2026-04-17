@@ -82,7 +82,7 @@ export default function DiaryEntry({ entry, isAuthenticated, onUpdate, onDelete,
 
     if (!patchRes.ok) {
       setError('Kunne ikke lagre bilder')
-      setUploading(false)
+      setUploadProgress(null)
       return
     }
 
