@@ -248,7 +248,7 @@ export default function DiaryEntry({ entry, isAuthenticated, onUpdate, onDelete,
         </>
       ) : (
         entry.text && (
-          <p className="font-body text-stone-700 leading-relaxed whitespace-pre-wrap mb-3">
+          <p className="font-pappa text-2xl text-stone-700 leading-relaxed whitespace-pre-wrap mb-3">
             {entry.text}
           </p>
         )
