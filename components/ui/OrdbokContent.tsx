@@ -370,7 +370,7 @@ function WordRow({
         {/* Variant steps */}
         {sortedVariants.map((v) => (
           <div key={v.id} className="flex items-start group/variant">
-            <span className="text-stone-300 text-sm mx-1.5 mt-0.5 select-none flex-shrink-0">→</span>
+            <span className="text-stone-300 text-sm mx-1.5 select-none flex-shrink-0">→</span>
             <div className="flex flex-col items-center relative">
               {/* Variant text — editable */}
               {editingCell?.id === v.id && editingCell.field === 'variant' ? (
@@ -429,11 +429,8 @@ function WordRow({
         {/* Real word (target) */}
         {word.real_word && (
           <>
-            <span className="text-stone-300 text-sm mx-1.5 mt-0.5 select-none flex-shrink-0">→</span>
-            <div className="flex flex-col items-center">
-              <span className="font-body text-stone-600 text-sm">{word.real_word}</span>
-              <span className="text-xs text-transparent select-none">·</span>
-            </div>
+            <span className="text-stone-300 text-sm mx-1.5 select-none flex-shrink-0">→</span>
+            <span className="font-body text-stone-600 text-sm">{word.real_word}</span>
           </>
         )}
 

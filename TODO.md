@@ -2,6 +2,7 @@
 ## In Progress
 
 ## Completed
+- [x] Ordbok: center-align real word in evolution row (items-center, remove spacer)
 - [x] Ordbok: base word (name + date) editable inline, PATCHes word_entries
 - [x] Mobile nav: hamburger menu with dropdown, active tab label shown
 - [x] Ordbok: variant edit/delete inline + inline evolution layout (Avo → Avoka → Avokado)
