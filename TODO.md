@@ -1,3 +1,14 @@
+# 2026-04-19
+## In Progress
+
+## Completed
+- [x] Brev: written letters to Sofia stored in Supabase with rich-text formatting
+  - [x] Supabase migration — sofia.letters table (id, title, content HTML, written_at, created_at)
+  - [x] TypeScript type — Letter interface in lib/types.ts
+  - [x] API routes — GET/POST /api/letters, PUT/DELETE /api/letters/[id]
+  - [x] Tab — add "Brev" to lib/tabs.ts
+  - [x] Page + Component — /brev with contentEditable editor + bold/italic/underline toolbar
+
 # 2026-04-17
 ## In Progress
 

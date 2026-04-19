@@ -108,13 +108,22 @@ Token counts below are approximate, based on tool use output metadata where avai
 | Ordbok: base word + date inline editing | ~3k | ~0.5k | OrdbokContent.tsx |
 | **Day Total** | **~37k** | **~7k** | **~44k tokens** |
 
+#### 2026-04-19
+
+| Task | Input Tokens | Output Tokens | Notes |
+|---|---|---|---|
+| Add favicon from public/favicon/ | ~3k | ~0.3k | layout.tsx metadata + site.webmanifest paths |
+| Brev: letters feature (migration, API, page, rich-text editor) | ~12k | ~3k | 004_letters.sql, types.ts, api/letters, lib/tabs.ts, brev/page.tsx, BrevContent.tsx |
+| **Day Total** | **~15k** | **~3.3k** | **~18.3k tokens** |
+
 #### Polishing Phase Total
 
 | | Input Tokens | Output Tokens | Total |
 |---|---|---|---|
 | 2026-04-16 | ~196k | ~29.5k | ~225.5k |
 | 2026-04-17 | ~37k | ~7k | ~44k |
-| **All days** | **~233k** | **~36.5k** | **~269.5k tokens** |
+| 2026-04-19 | ~15k | ~3.3k | ~18.3k |
+| **All days** | **~248k** | **~39.8k** | **~287.8k tokens** |
 
 ### Grand Total
 

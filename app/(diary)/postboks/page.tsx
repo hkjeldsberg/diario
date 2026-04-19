@@ -1,5 +1,14 @@
-import { EmailMessage } from '@/lib/types'
-import EmailCard from '@/components/ui/EmailCard'
+import { cookies } from 'next/headers'
+import { getIronSession } from 'iron-session'
+import { SessionData, sessionOptions } from '@/lib/session'
+import { supabaseAdmin } from '@/lib/supabase'
+import { EmailMessage, Letter } from '@/lib/types'
+import PostboksContent from '@/components/ui/PostboksContent'
+
+interface MinimalCookieStore {
+  get: (name: string) => { name: string; value: string } | undefined
+  set: (...args: unknown[]) => void
+}
 
 async function getEmails(): Promise<{ emails: EmailMessage[]; error?: string }> {
   try {
@@ -14,23 +23,32 @@ async function getEmails(): Promise<{ emails: EmailMessage[]; error?: string }> 
 }
 
 export default async function PostboksPage() {
+  const cookieStore = cookies()
+  const session = await getIronSession<SessionData>(
+    cookieStore as unknown as MinimalCookieStore,
+    sessionOptions
+  )
+  const isAuthenticated = session.isLoggedIn === true
+
+  let letters: Letter[] = []
   const { emails, error } = await getEmails()
-  const displayEmails = emails
+
+  try {
+    const { data } = await supabaseAdmin
+      .from('letters')
+      .select('*')
+      .order('written_at', { ascending: false })
+    letters = (data ?? []) as Letter[]
+  } catch {
+    // env vars not set — empty state
+  }
 
   return (
-    <div>
-      <h2 className="font-display text-3xl text-stone-800 mb-2">Postboks</h2>
-      <p className="font-handwritten text-sage text-xl mb-8">Brev til deg</p>
-
-      {error && (
-        <p className="font-body text-stone-400 text-sm mb-4 italic">
-          (Gmail-feil: {error})
-        </p>
-      )}
-
-      {displayEmails.map((email) => (
-        <EmailCard key={email.id} email={email} />
-      ))}
-    </div>
+    <PostboksContent
+      emails={emails}
+      initialLetters={letters}
+      isAuthenticated={isAuthenticated}
+      emailError={error}
+    />
   )
 }

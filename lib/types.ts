@@ -23,6 +23,14 @@ export interface WordVariant {
   created_at: string
 }
 
+export interface Letter {
+  id: string
+  title: string
+  content: string  // HTML
+  written_at: string  // ISO date
+  created_at: string
+}
+
 export interface EmailMessage {
   id: string
   from: string
