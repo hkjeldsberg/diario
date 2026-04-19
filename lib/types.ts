@@ -23,6 +23,14 @@ export interface WordVariant {
   created_at: string
 }
 
+export interface GrowthRecord {
+  id: string
+  recorded_at: string  // ISO date
+  weight_kg: number | null
+  height_cm: number | null
+  created_at: string
+}
+
 export interface Letter {
   id: string
   title: string

@@ -114,7 +114,8 @@ Token counts below are approximate, based on tool use output metadata where avai
 |---|---|---|---|
 | Add favicon from public/favicon/ | ~3k | ~0.3k | layout.tsx metadata + site.webmanifest paths |
 | Brev: letters feature (migration, API, page, rich-text editor) | ~12k | ~3k | 004_letters.sql, types.ts, api/letters, lib/tabs.ts, brev/page.tsx, BrevContent.tsx |
-| **Day Total** | **~15k** | **~3.3k** | **~18.3k tokens** |
+| Din utvikling: growth chart tab (migration, API, SVG charts, add form) | ~14k | ~4k | 005_growth_records.sql, types.ts, api/growth, lib/tabs.ts, din-utvikling/page.tsx, UtviklingContent.tsx |
+| **Day Total** | **~29k** | **~7.3k** | **~36.3k tokens** |
 
 #### Polishing Phase Total
 

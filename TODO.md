@@ -1,7 +1,9 @@
 # 2026-04-19
 ## In Progress
+- [x] WHO reference bands overlaid on growth charts (p3–p97 fill + p50 dashed median, low opacity, no legend/hover)
 
 ## Completed
+- [x] Add new tab "Din utvikling" which displays height and weight measurements. They should displayed as interactive graphs, and mobile friendly. Migrate data from the same Supabase project, but from the scheme "barnshli" to scheme "sofia". Table is barnshli.growth_records. The user should also be able to upload new measurements (weight or height). 
 - [x] Brev: written letters to Sofia stored in Supabase with rich-text formatting
   - [x] Supabase migration — sofia.letters table (id, title, content HTML, written_at, created_at)
   - [x] TypeScript type — Letter interface in lib/types.ts

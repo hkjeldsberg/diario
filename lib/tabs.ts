@@ -52,6 +52,11 @@ export const TAB_DEFINITIONS: TabDefinition[] = [
     href: '/din-ordbok',
     label: 'Din ordbok',
   },
+  {
+    key: 'din-utvikling',
+    href: '/din-utvikling',
+    label: 'Din utvikling',
+  },
 ]
 
 export function getBirthDate(): Date {
