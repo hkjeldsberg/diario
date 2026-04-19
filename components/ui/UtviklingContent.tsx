@@ -267,8 +267,8 @@ export default function UtviklingContent({
     <div className="max-w-2xl mx-auto">
       <div className="flex items-baseline justify-between mb-8">
         <div>
-          <h2 className="font-display text-2xl text-terracotta">Din utvikling</h2>
-          <p className="font-body text-sm text-stone-500 mt-1">Vekst og høyde over tid</p>
+          <h2 className="font-display text-3xl text-stone-800 mb-2">Din utvikling</h2>
+          <p className="font-handwritten text-sage text-xl">Vekst og høyde over tid</p>
         </div>
         {isAuthenticated && !adding && (
           <button onClick={() => setAdding(true)} className="font-body text-sm text-terracotta hover:text-terracotta/70 transition-colors">
