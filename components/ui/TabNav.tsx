@@ -36,7 +36,7 @@ export default function TabNav() {
         </div>
 
         {/* Desktop: horizontal tab list */}
-        <div className="hidden md:flex gap-1 overflow-x-auto pb-0 -mb-px scrollbar-none">
+        <div className="hidden md:flex justify-center gap-1 overflow-x-auto pb-0 -mb-px scrollbar-none">
           {TAB_DEFINITIONS.map((tab) => {
             const isActive = pathname === tab.href || pathname.startsWith(tab.href + '/')
             return (
