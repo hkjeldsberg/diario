@@ -82,10 +82,80 @@ export default function OrdbokContent({ initialWords, isAuthenticated }: OrdbokC
   }
 
   return (
-    <div className="relative">
-      <h2 className="font-display text-3xl text-stone-800 mb-2">Din ordbok</h2>
-      <p className="font-handwritten text-sage text-xl mb-2">Ordene dine venter...</p>
-      <p className="font-body text-stone-400 text-sm mb-8">{words.length} ord lært</p>
+    <div className="max-w-2xl mx-auto">
+      <div className="flex items-baseline justify-between mb-8">
+        <div>
+          <h2 className="font-display text-2xl text-terracotta">Din ordbok</h2>
+          <p className="font-handwritten text-sage text-xl">Ord og uttrykk over årene</p>
+          <p className="font-body text-sm text-stone-500 mt-1">{words.length} ord lært</p>
+        </div>
+        {isAuthenticated && !adding && (
+          <button
+            onClick={() => setAdding(true)}
+            className="font-body text-sm text-terracotta hover:text-terracotta/70 transition-colors"
+          >
+            + Legg til ord
+          </button>
+        )}
+      </div>
+
+      {adding && (
+        <form
+          onSubmit={handleAdd}
+          className="mb-8 bg-white/60 rounded-xl border border-dusty-rose/30 p-5 space-y-4"
+        >
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="font-body text-xs text-stone-500 uppercase tracking-wide mb-1 block">Sofias ord</label>
+              <input
+                type="text"
+                value={form.base_word}
+                onChange={(e) => setForm((f) => ({ ...f, base_word: e.target.value }))}
+                placeholder="f.eks. Avo"
+                className="w-full border border-dusty-rose/40 rounded-lg px-3 py-2 font-body text-sm text-stone-700 bg-transparent outline-none focus:border-terracotta/60"
+                autoFocus
+                required
+              />
+            </div>
+            <div>
+              <label className="font-body text-xs text-stone-500 uppercase tracking-wide mb-1 block">Egentlig ord</label>
+              <input
+                type="text"
+                value={form.real_word}
+                onChange={(e) => setForm((f) => ({ ...f, real_word: e.target.value }))}
+                placeholder="f.eks. Avokado"
+                className="w-full border border-dusty-rose/40 rounded-lg px-3 py-2 font-body text-sm text-stone-700 bg-transparent outline-none focus:border-terracotta/60"
+              />
+            </div>
+            <div>
+              <label className="font-body text-xs text-stone-500 uppercase tracking-wide mb-1 block">Dato</label>
+              <input
+                type="date"
+                value={form.first_heard_at}
+                onChange={(e) => setForm((f) => ({ ...f, first_heard_at: e.target.value }))}
+                className="w-full border border-dusty-rose/40 rounded-lg px-3 py-2 font-body text-sm text-stone-700 bg-transparent outline-none focus:border-terracotta/60"
+              />
+            </div>
+          </div>
+          {error && <p className="font-body text-xs text-red-500">{error}</p>}
+          <div className="flex gap-3">
+            <button
+              type="submit"
+              disabled={saving}
+              className="font-body text-sm px-5 py-2 bg-terracotta text-cream rounded-lg hover:bg-terracotta/80 transition-colors disabled:opacity-50"
+            >
+              {saving ? 'Lagrer…' : 'Lagre'}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setAdding(false); setError('') }}
+              className="font-body text-sm px-5 py-2 text-stone-500 hover:text-stone-700 transition-colors"
+            >
+              Avbryt
+            </button>
+          </div>
+        </form>
+      )}
 
       <div className="space-y-0">
         {words.map((word) => (
@@ -99,86 +169,9 @@ export default function OrdbokContent({ initialWords, isAuthenticated }: OrdbokC
             onVariantDelete={deleteWordVariant}
           />
         ))}
-        {words.length === 0 && (
-          <p className="font-body text-stone-400 italic">Ingen ord enda...</p>
+        {words.length === 0 && !adding && (
+          <p className="font-body text-stone-400 italic text-sm">Ingen ord enda...</p>
         )}
-      </div>
-
-      {error && <p className="text-xs font-body text-terracotta mt-4">{error}</p>}
-
-      {isAuthenticated && (
-        <div className="mt-8">
-          {!adding ? (
-            <button
-              onClick={() => setAdding(true)}
-              className="flex items-center gap-2 px-5 py-2.5 bg-terracotta text-cream rounded-full font-body text-sm hover:bg-terracotta/90 transition-colors shadow-sm"
-            >
-              <span className="text-lg leading-none">+</span>
-              Legg til ord
-            </button>
-          ) : (
-            <form
-              onSubmit={handleAdd}
-              className="bg-white rounded-2xl shadow-sm border border-dusty-rose/30 p-6 max-w-sm"
-            >
-              <h3 className="font-display text-lg text-stone-800 mb-4">Nytt ord</h3>
-              <div className="space-y-3">
-                <div>
-                  <label className="block font-body text-xs text-stone-500 mb-1">Sofias ord</label>
-                  <input
-                    type="text"
-                    value={form.base_word}
-                    onChange={(e) => setForm((f) => ({ ...f, base_word: e.target.value }))}
-                    placeholder="f.eks. Avo"
-                    className="w-full border border-cream-dark rounded-lg px-3 py-1.5 font-body text-sm text-stone-800 bg-cream/50 focus:outline-none focus:ring-2 focus:ring-dusty-rose/50"
-                    autoFocus
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block font-body text-xs text-stone-500 mb-1">Egentlig ord</label>
-                  <input
-                    type="text"
-                    value={form.real_word}
-                    onChange={(e) => setForm((f) => ({ ...f, real_word: e.target.value }))}
-                    placeholder="f.eks. Avokado"
-                    className="w-full border border-cream-dark rounded-lg px-3 py-1.5 font-body text-sm text-stone-800 bg-cream/50 focus:outline-none focus:ring-2 focus:ring-dusty-rose/50"
-                  />
-                </div>
-                <div>
-                  <label className="block font-body text-xs text-stone-500 mb-1">Dato</label>
-                  <input
-                    type="date"
-                    value={form.first_heard_at}
-                    onChange={(e) => setForm((f) => ({ ...f, first_heard_at: e.target.value }))}
-                    className="w-full border border-cream-dark rounded-lg px-3 py-1.5 font-body text-sm text-stone-800 bg-cream/50 focus:outline-none focus:ring-2 focus:ring-dusty-rose/50"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-3 mt-4">
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="px-4 py-1.5 bg-terracotta text-cream rounded-full font-body text-sm hover:bg-terracotta/90 disabled:opacity-60"
-                >
-                  {saving ? 'Lagrer...' : 'Lagre'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setAdding(false); setError('') }}
-                  className="px-4 py-1.5 text-stone-500 font-body text-sm hover:text-stone-700"
-                >
-                  Avbryt
-                </button>
-              </div>
-            </form>
-          )}
-        </div>
-      )}
-
-      <div className="absolute -right-4 top-0 opacity-10 pointer-events-none hidden md:block">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/svgs/botanical-1.svg" alt="" className="w-32" />
       </div>
     </div>
   )
@@ -366,6 +359,7 @@ function WordRow({
             </span>
           )}
         </div>
+
 
         {/* Variant steps */}
         {sortedVariants.map((v) => (
