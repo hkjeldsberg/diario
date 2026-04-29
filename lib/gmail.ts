@@ -1,12 +1,15 @@
 import { google } from 'googleapis'
 import { EmailMessage } from './types'
+import { getRefreshToken } from './token-store'
 
-function getGmailClient() {
+async function getGmailClient() {
+  const refreshToken =
+    (await getRefreshToken('gmail', 'primary')) ?? process.env.GMAIL_REFRESH_TOKEN
   const auth = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET
   )
-  auth.setCredentials({ refresh_token: process.env.GMAIL_REFRESH_TOKEN })
+  auth.setCredentials({ refresh_token: refreshToken })
   return google.gmail({ version: 'v1', auth })
 }
 
@@ -67,7 +70,7 @@ async function extractImageAttachments(
 }
 
 export async function fetchEmails(): Promise<EmailMessage[]> {
-  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GMAIL_REFRESH_TOKEN) {
+  if (!process.env.GOOGLE_CLIENT_ID) {
     return []
   }
 
@@ -75,7 +78,7 @@ export async function fetchEmails(): Promise<EmailMessage[]> {
   if (!toAddress) return []
 
   try {
-    const gmail = getGmailClient()
+    const gmail = await getGmailClient()
 
     // Step 1: List message IDs
     const listRes = await gmail.users.messages.list({

@@ -13,27 +13,35 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Password required' }, { status: 400 })
     }
 
-    const appPassword = process.env.APP_PASSWORD
-    if (!appPassword) {
-      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 })
-    }
+    const users: Array<{ userId: string; envKey: string }> = [
+      { userId: 'primary', envKey: 'APP_PASSWORD' },
+      { userId: 'partner', envKey: 'APP_PASSWORD_PARTNER' },
+    ]
 
-    // Timing-safe comparison to prevent timing attacks
     const providedBuffer = Buffer.from(password)
-    const expectedBuffer = Buffer.from(appPassword)
+    let matchedUserId: string | null = null
 
-    let isValid = false
-    if (providedBuffer.length === expectedBuffer.length) {
-      isValid = timingSafeEqual(providedBuffer, expectedBuffer)
+    for (const { userId, envKey } of users) {
+      const storedPassword = process.env[envKey]
+      if (!storedPassword) continue
+      const expectedBuffer = Buffer.from(storedPassword)
+      if (
+        providedBuffer.length === expectedBuffer.length &&
+        timingSafeEqual(providedBuffer, expectedBuffer)
+      ) {
+        matchedUserId = userId
+        break
+      }
     }
 
-    if (!isValid) {
+    if (!matchedUserId) {
       return NextResponse.json({ error: 'Invalid password' }, { status: 401 })
     }
 
     const cookieStore = cookies()
     const session = await getIronSession<SessionData>(cookieStore, sessionOptions)
     session.isLoggedIn = true
+    session.userId = matchedUserId
     await session.save()
 
     return NextResponse.json({ ok: true })

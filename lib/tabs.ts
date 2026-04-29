@@ -57,6 +57,11 @@ export const TAB_DEFINITIONS: TabDefinition[] = [
     href: '/din-utvikling',
     label: 'Din utvikling',
   },
+  {
+    key: 'innstillinger',
+    href: '/innstillinger',
+    label: 'Innstillinger',
+  },
 ]
 
 export function getBirthDate(): Date {

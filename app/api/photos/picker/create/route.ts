@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/auth'
+import { requireAuth, getSession } from '@/lib/auth'
 import { createPickerSession, isPickerConfigured } from '@/lib/google-picker'
 
 export async function POST() {
@@ -13,8 +13,10 @@ export async function POST() {
     )
   }
 
+  const session = await getSession()
+
   try {
-    const { id, pickerUri } = await createPickerSession()
+    const { id, pickerUri } = await createPickerSession(session.userId)
     return NextResponse.json({ sessionId: id, pickerUri })
   } catch (err) {
     console.error('Failed to create picker session:', err)

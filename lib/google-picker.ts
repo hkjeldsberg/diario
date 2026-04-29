@@ -1,25 +1,32 @@
 import { OAuth2Client } from 'google-auth-library'
+import { getRefreshToken } from './token-store'
 
 const PICKER_BASE_URL = 'https://photospicker.googleapis.com/v1'
 
-function getPickerAuth(): OAuth2Client {
+async function getPickerAuth(userId?: string): Promise<OAuth2Client> {
+  const userKey = userId === 'partner' ? 'partner' : 'primary'
+  const envFallback =
+    userId === 'partner'
+      ? process.env.GOOGLE_PICKER_REFRESH_TOKEN_PARTNER
+      : process.env.GOOGLE_PICKER_REFRESH_TOKEN
+  const refreshToken = (await getRefreshToken('photos', userKey)) ?? envFallback
   const client = new OAuth2Client(
     process.env.GOOGLE_CLIENT_ID_PHOTOS,
     process.env.GOOGLE_CLIENT_SECRET_PHOTOS
   )
-  client.setCredentials({ refresh_token: process.env.GOOGLE_PICKER_REFRESH_TOKEN })
+  client.setCredentials({ refresh_token: refreshToken })
   return client
 }
 
-export async function getAccessToken(): Promise<string> {
-  const client = getPickerAuth()
+export async function getAccessToken(userId?: string): Promise<string> {
+  const client = await getPickerAuth(userId)
   const { token } = await client.getAccessToken()
   if (!token) throw new Error('Failed to get Google Photos Picker access token')
   return token
 }
 
-export async function createPickerSession(): Promise<{ id: string; pickerUri: string }> {
-  const token = await getAccessToken()
+export async function createPickerSession(userId?: string): Promise<{ id: string; pickerUri: string }> {
+  const token = await getAccessToken(userId)
 
   const res = await fetch(`${PICKER_BASE_URL}/sessions`, {
     method: 'POST',
@@ -53,8 +60,8 @@ interface PickerMediaItem {
   }
 }
 
-export async function pollPickerSession(sessionId: string): Promise<PickerSessionStatus> {
-  const token = await getAccessToken()
+export async function pollPickerSession(sessionId: string, userId?: string): Promise<PickerSessionStatus> {
+  const token = await getAccessToken(userId)
 
   const res = await fetch(`${PICKER_BASE_URL}/sessions/${sessionId}`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -94,9 +101,9 @@ export async function pollPickerSession(sessionId: string): Promise<PickerSessio
   return { ready: true, mediaItems: allItems }
 }
 
-export async function deletePickerSession(sessionId: string): Promise<void> {
+export async function deletePickerSession(sessionId: string, userId?: string): Promise<void> {
   try {
-    const token = await getAccessToken()
+    const token = await getAccessToken(userId)
     await fetch(`${PICKER_BASE_URL}/sessions/${sessionId}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },

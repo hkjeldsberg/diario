@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireAuth } from '@/lib/auth'
+import { requireAuth, getSession } from '@/lib/auth'
 import { pollPickerSession, deletePickerSession, isPickerConfigured, getAccessToken } from '@/lib/google-picker'
 import { supabaseAdmin, STORAGE_BUCKET } from '@/lib/supabase'
 import { randomUUID } from 'crypto'
@@ -16,17 +16,18 @@ export async function GET(
     return NextResponse.json({ error: 'Google Photos Picker not configured' }, { status: 501 })
   }
 
+  const session = await getSession()
   const { sessionId } = params
 
   try {
-    const status = await pollPickerSession(sessionId)
+    const status = await pollPickerSession(sessionId, session.userId)
 
     if (!status.ready) {
       return NextResponse.json({ ready: false })
     }
 
     // Download each photo and re-upload to Supabase Storage
-    const token = await getAccessToken()
+    const token = await getAccessToken(session.userId)
     const urls: string[] = []
 
     for (const item of status.mediaItems ?? []) {
@@ -75,7 +76,7 @@ export async function GET(
     }
 
     // Clean up the picker session
-    await deletePickerSession(sessionId)
+    await deletePickerSession(sessionId, session.userId)
 
     return NextResponse.json({ ready: true, urls })
   } catch (err) {
