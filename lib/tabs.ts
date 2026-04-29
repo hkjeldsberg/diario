@@ -60,7 +60,7 @@ export const TAB_DEFINITIONS: TabDefinition[] = [
   {
     key: 'innstillinger',
     href: '/innstillinger',
-    label: 'Innstillinger',
+    label: '️🍄‍🟫',
   },
 ]
 
