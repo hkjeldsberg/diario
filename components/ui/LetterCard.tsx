@@ -137,10 +137,9 @@ export default function LetterCard({ letter, isAuthenticated, onUpdate, onDelete
           </div>
           <p className="font-body text-stone-700 text-sm mt-0.5 font-medium">{letter.title}</p>
           {!expanded && (
-            <p
-              className="font-body text-stone-400 text-sm mt-1 line-clamp-2"
-              dangerouslySetInnerHTML={{ __html: letter.content }}
-            />
+            <p className="font-body text-stone-400 text-sm mt-1 line-clamp-2">
+              {letter.content.replace(/<[^>]*>/g, '')}
+            </p>
           )}
         </div>
       </div>

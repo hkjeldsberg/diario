@@ -49,6 +49,14 @@ export default function OrdbokContent({ initialWords, isAuthenticated }: OrdbokC
     )
   }
 
+  function addWordVariant(wordId: string, newVariant: WordVariant) {
+    setWords((prev) =>
+      prev.map((w) =>
+        w.id === wordId ? { ...w, variants: [...(w.variants ?? []), newVariant] } : w
+      )
+    )
+  }
+
   async function handleDeleteWord(id: string) {
     const res = await fetch(`/api/words/${id}`, { method: 'DELETE' })
     if (res.ok) setWords((prev) => prev.filter((w) => w.id !== id))
@@ -85,7 +93,7 @@ export default function OrdbokContent({ initialWords, isAuthenticated }: OrdbokC
     <div className="max-w-2xl mx-auto">
       <div className="flex items-baseline justify-between mb-8">
         <div>
-          <h2 className="font-display text-2xl text-terracotta">Din ordbok</h2>
+          <h2 className="font-display text-3xl text-stone-800">Din ordbok</h2>
           <p className="font-handwritten text-sage text-xl">Ord og uttrykk over årene</p>
           <p className="font-body text-sm text-stone-500 mt-1">{words.length} ord lært</p>
         </div>
@@ -167,6 +175,7 @@ export default function OrdbokContent({ initialWords, isAuthenticated }: OrdbokC
             onWordUpdate={updateWord}
             onVariantUpdate={updateWordVariants}
             onVariantDelete={deleteWordVariant}
+            onVariantAdd={addWordVariant}
           />
         ))}
         {words.length === 0 && !adding && (
@@ -188,6 +197,7 @@ function WordRow({
   onWordUpdate,
   onVariantUpdate,
   onVariantDelete,
+  onVariantAdd,
 }: {
   word: WordEntry
   isAuthenticated: boolean
@@ -195,11 +205,32 @@ function WordRow({
   onWordUpdate: (updated: WordEntry) => void
   onVariantUpdate: (wordId: string, v: WordVariant) => void
   onVariantDelete: (wordId: string, variantId: string) => void
+  onVariantAdd: (wordId: string, v: WordVariant) => void
 }) {
   const [editingCell, setEditingCell] = useState<EditingCell>(null)
   const [editValue, setEditValue] = useState('')
   const [editingBase, setEditingBase] = useState<'base_word' | 'first_heard_at' | null>(null)
   const [baseEditValue, setBaseEditValue] = useState('')
+  const [addingVariant, setAddingVariant] = useState(false)
+  const [variantForm, setVariantForm] = useState({ variant: '', recorded_at: new Date().toISOString().split('T')[0] })
+  const [variantSaving, setVariantSaving] = useState(false)
+
+  async function handleAddVariant(e: React.FormEvent) {
+    e.preventDefault()
+    if (!variantForm.variant.trim()) return
+    setVariantSaving(true)
+    const res = await fetch(`/api/words/${word.id}/variants`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(variantForm),
+    })
+    if (res.ok) {
+      onVariantAdd(word.id, await res.json())
+      setVariantForm({ variant: '', recorded_at: new Date().toISOString().split('T')[0] })
+      setAddingVariant(false)
+    }
+    setVariantSaving(false)
+  }
 
   function startEditBase(field: 'base_word' | 'first_heard_at', current: string) {
     setEditingBase(field)
@@ -259,6 +290,7 @@ function WordRow({
   // ── Layout: words WITHOUT variants ─────────────────────────────────────────
   if (!hasVariants) {
     return (
+      <>
       <div className="group flex items-baseline gap-3 py-2 border-b border-dusty-rose/10 last:border-0">
         {editingBase === 'base_word' ? (
           <input
@@ -280,8 +312,8 @@ function WordRow({
         )}
         {word.real_word && (
           <>
-            <span className="text-stone-300 text-sm select-none">→</span>
-            <span className="font-body text-stone-700 text-sm">{word.real_word}</span>
+            <span className="text-stone-300 text-lg select-none">→</span>
+            <span className="font-body text-stone-500 text-lg italic">{word.real_word}</span>
           </>
         )}
         {editingBase === 'first_heard_at' ? (
@@ -303,15 +335,51 @@ function WordRow({
           </span>
         )}
         {isAuthenticated && (
-          <button
-            type="button"
-            onClick={() => onDeleteWord(word.id)}
-            className="opacity-0 group-hover:opacity-100 transition-opacity text-stone-300 hover:text-red-400 text-xs leading-none flex-shrink-0"
-          >
-            ✕
-          </button>
+          <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              type="button"
+              onClick={() => setAddingVariant(true)}
+              className="text-stone-300 hover:text-terracotta text-xs leading-none"
+              title="Legg til variant"
+            >
+              +
+            </button>
+            <button
+              type="button"
+              onClick={() => onDeleteWord(word.id)}
+              className="text-stone-300 hover:text-red-400 text-xs leading-none flex-shrink-0"
+            >
+              ✕
+            </button>
+          </div>
         )}
       </div>
+      {addingVariant && (
+        <form onSubmit={handleAddVariant} className="flex items-center gap-2 mt-1 ml-1">
+          <input
+            autoFocus
+            type="text"
+            value={variantForm.variant}
+            onChange={(e) => setVariantForm((f) => ({ ...f, variant: e.target.value }))}
+            placeholder="Ny variant"
+            className="font-display text-sm text-terracotta italic bg-transparent border-b border-terracotta/40 outline-none w-24"
+            onKeyDown={(e) => e.key === 'Escape' && setAddingVariant(false)}
+          />
+          <input
+            type="date"
+            value={variantForm.recorded_at}
+            onChange={(e) => setVariantForm((f) => ({ ...f, recorded_at: e.target.value }))}
+            className="font-handwritten text-xs text-stone-400 bg-transparent border-b border-stone-300 outline-none"
+          />
+          <button type="submit" disabled={variantSaving} className="font-body text-xs text-terracotta hover:text-terracotta/70 disabled:opacity-50">
+            {variantSaving ? '…' : 'Lagre'}
+          </button>
+          <button type="button" onClick={() => setAddingVariant(false)} className="font-body text-xs text-stone-400 hover:text-stone-600">
+            Avbryt
+          </button>
+        </form>
+      )}
+      </>
     )
   }
 
@@ -330,11 +398,11 @@ function WordRow({
               onChange={(e) => setBaseEditValue(e.target.value)}
               onBlur={commitBaseEdit}
               onKeyDown={handleBaseKey}
-              className="font-display text-base text-terracotta italic bg-transparent border-b border-terracotta/40 outline-none w-20 text-center"
+              className="font-display text-lg text-terracotta italic bg-transparent border-b border-terracotta/40 outline-none w-20 text-center"
             />
           ) : (
             <span
-              className={`font-display text-base text-terracotta italic ${isAuthenticated ? 'cursor-pointer hover:underline decoration-dotted' : ''}`}
+              className={`font-display text-lg text-terracotta italic ${isAuthenticated ? 'cursor-pointer hover:underline decoration-dotted' : ''}`}
               onClick={() => isAuthenticated && startEditBase('base_word', word.base_word)}
             >
               {word.base_word}
@@ -364,7 +432,7 @@ function WordRow({
         {/* Variant steps */}
         {sortedVariants.map((v) => (
           <div key={v.id} className="flex items-start group/variant">
-            <span className="text-stone-300 text-sm mx-1.5 select-none flex-shrink-0">→</span>
+            <span className="text-stone-300 text-lg mx-1.5 select-none flex-shrink-0">→</span>
             <div className="flex flex-col items-center relative">
               {/* Variant text — editable */}
               {editingCell?.id === v.id && editingCell.field === 'variant' ? (
@@ -375,11 +443,11 @@ function WordRow({
                   onChange={(e) => setEditValue(e.target.value)}
                   onBlur={commitEdit}
                   onKeyDown={handleKey}
-                  className="font-display text-base text-terracotta italic bg-transparent border-b border-terracotta/40 outline-none w-20 text-center"
+                  className="font-display text-lg text-terracotta italic bg-transparent border-b border-terracotta/40 outline-none w-20 text-center"
                 />
               ) : (
                 <span
-                  className={`font-display text-base text-terracotta/80 italic ${isAuthenticated ? 'cursor-pointer hover:underline decoration-dotted' : ''}`}
+                  className={`font-display text-lg text-terracotta/80 italic ${isAuthenticated ? 'cursor-pointer hover:underline decoration-dotted' : ''}`}
                   onClick={() => isAuthenticated && startEdit(v.id, 'variant', v.variant)}
                 >
                   {v.variant}
@@ -423,27 +491,62 @@ function WordRow({
         {/* Real word (target) */}
         {word.real_word && (
           <>
-            <span className="text-stone-300 text-sm mx-1.5 select-none flex-shrink-0">→</span>
-            <span className="font-body text-stone-600 text-sm">{word.real_word}</span>
+            <span className="text-stone-300 text-lg mx-1.5 select-none flex-shrink-0">→</span>
+            <span className="font-body text-stone-500 text-lg italic">{word.real_word}</span>
           </>
         )}
 
-        {/* Main date + delete on right */}
+        {/* Main date + actions on right */}
         <div className="ml-auto flex items-start gap-2 pl-3">
           <span className="font-handwritten text-stone-400 text-sm whitespace-nowrap">
             {fmtDate(word.first_heard_at)}
           </span>
           {isAuthenticated && (
-            <button
-              type="button"
-              onClick={() => onDeleteWord(word.id)}
-              className="opacity-0 group-hover:opacity-100 transition-opacity text-stone-300 hover:text-red-400 text-xs leading-none mt-0.5 flex-shrink-0"
-            >
-              ✕
-            </button>
+            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button
+                type="button"
+                onClick={() => setAddingVariant(true)}
+                className="text-stone-300 hover:text-terracotta text-xs leading-none mt-0.5"
+                title="Legg til variant"
+              >
+                +
+              </button>
+              <button
+                type="button"
+                onClick={() => onDeleteWord(word.id)}
+                className="text-stone-300 hover:text-red-400 text-xs leading-none mt-0.5 flex-shrink-0"
+              >
+                ✕
+              </button>
+            </div>
           )}
         </div>
       </div>
+      {addingVariant && (
+        <form onSubmit={handleAddVariant} className="flex items-center gap-2 mt-1 ml-1">
+          <input
+            autoFocus
+            type="text"
+            value={variantForm.variant}
+            onChange={(e) => setVariantForm((f) => ({ ...f, variant: e.target.value }))}
+            placeholder="Ny variant"
+            className="font-display text-sm text-terracotta italic bg-transparent border-b border-terracotta/40 outline-none w-24"
+            onKeyDown={(e) => e.key === 'Escape' && setAddingVariant(false)}
+          />
+          <input
+            type="date"
+            value={variantForm.recorded_at}
+            onChange={(e) => setVariantForm((f) => ({ ...f, recorded_at: e.target.value }))}
+            className="font-handwritten text-xs text-stone-400 bg-transparent border-b border-stone-300 outline-none"
+          />
+          <button type="submit" disabled={variantSaving} className="font-body text-xs text-terracotta hover:text-terracotta/70 disabled:opacity-50">
+            {variantSaving ? '…' : 'Lagre'}
+          </button>
+          <button type="button" onClick={() => setAddingVariant(false)} className="font-body text-xs text-stone-400 hover:text-stone-600">
+            Avbryt
+          </button>
+        </form>
+      )}
     </div>
   )
 }
