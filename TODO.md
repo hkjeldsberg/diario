@@ -1,3 +1,7 @@
+# 2026-06-24
+## Completed
+- [x] Update favicon + Apple touch icon to Apple-style rounded square (white squircle bg behind duck)
+
 # 2026-04-19
 ## In Progress
 

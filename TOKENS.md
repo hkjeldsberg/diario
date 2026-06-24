@@ -117,6 +117,13 @@ Token counts below are approximate, based on tool use output metadata where avai
 | Din utvikling: growth chart tab (migration, API, SVG charts, add form) | ~14k | ~4k | 005_growth_records.sql, types.ts, api/growth, lib/tabs.ts, din-utvikling/page.tsx, UtviklingContent.tsx |
 | **Day Total** | **~29k** | **~7.3k** | **~36.3k tokens** |
 
+#### 2026-06-24
+
+| Task | Input Tokens | Output Tokens | Notes |
+|---|---|---|---|
+| Apple-style rounded-square icons (favicon + apple touch + ico) | ~8k | ~1.5k | scripts/gen-rounded-icons.mjs; regenerated public/favicon/* PNGs + favicon.ico + app/favicon.ico with baked white squircle bg (rx 22%) behind duck |
+| **Day Total** | **~8k** | **~1.5k** | **~9.5k tokens** |
+
 #### Polishing Phase Total
 
 | | Input Tokens | Output Tokens | Total |
