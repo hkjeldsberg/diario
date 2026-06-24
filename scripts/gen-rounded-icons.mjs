@@ -26,13 +26,18 @@ function roundedSquare(size) {
 }
 
 for (const [size, name] of targets) {
-  const bg = sharp(roundedSquare(size)).png();
+  // Apple touch icon must be a flat opaque square (no rounding, no alpha) —
+  // iOS applies its own corner mask, so transparent corners render as black/broken.
+  const isAppleTouchIcon = name === 'apple-touch-icon.png';
+  const bg = sharp(isAppleTouchIcon
+    ? { create: { width: size, height: size, channels: 4, background: BG } }
+    : roundedSquare(size)
+  ).png();
   const duck = await sharp(master)
     .resize(size, size, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
     .toBuffer();
-  await bg
-    .composite([{ input: duck }])
-    .png()
-    .toFile(path.join(dir, name));
-  console.log(`wrote ${name} (${size}x${size}, rx=${Math.round(size * 0.22)})`);
+  let img = bg.composite([{ input: duck }]).png();
+  if (isAppleTouchIcon) img = img.flatten({ background: BG });
+  await img.toFile(path.join(dir, name));
+  console.log(`wrote ${name} (${size}x${size}, rx=${isAppleTouchIcon ? 0 : Math.round(size * 0.22)})`);
 }
